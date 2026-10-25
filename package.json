@@ -1,0 +1,14 @@
+{
+  "name": "agritech-platform",
+  "version": "1.0.0",
+  "description": "AgriTech - Complete MERN Smart Farming Management Platform",
+  "scripts": {
+    "server": "npm --prefix backend run dev",
+    "client": "npm --prefix frontend run dev",
+    "seed": "npm --prefix backend run seed",
+    "install:all": "npm --prefix backend install && npm --prefix frontend install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
