@@ -48,7 +48,7 @@ const MarketplacePage = () => {
     price: '',
     unit: 'quintal',
     stockQuantity: '',
-    location: user?.location || 'Central Mandi',
+    location: user?.location || '',
     imageUrl: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&auto=format&fit=crop&q=80'
   });
 
@@ -540,7 +540,7 @@ const MarketplacePage = () => {
                         id="sellLocInput"
                         type="text"
                         className="form-control"
-                        placeholder="e.g. Samrala Grain Market, Punjab"
+                        placeholder="e.g. Indore Grain Mandi or Samrala Market"
                         value={sellForm.location}
                         onChange={(e) => setSellForm({ ...sellForm, location: e.target.value })}
                         required

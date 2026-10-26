@@ -11,7 +11,7 @@ const RegisterPage = () => {
     confirmPassword: '',
     role: 'farmer',
     phone: '',
-    location: 'Punjab, India'
+    location: ''
   });
 
   const [loading, setLoading] = useState(false);

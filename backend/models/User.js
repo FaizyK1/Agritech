@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
     },
     location: {
       type: String,
-      default: 'Punjab, India'
+      default: ''
     },
     avatar: {
       type: String,

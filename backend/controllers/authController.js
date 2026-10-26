@@ -29,7 +29,7 @@ export const registerUser = async (req, res, next) => {
       password,
       role: role && ['farmer', 'expert', 'admin'].includes(role) ? role : 'farmer',
       phone: phone || '',
-      location: location || 'Punjab, India'
+      location: (location && location.trim()) ? location.trim() : ''
     });
 
     res.status(201).json({

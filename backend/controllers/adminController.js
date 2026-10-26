@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import User from '../models/User.js';
 import Farm from '../models/Farm.js';
 import Crop from '../models/Crop.js';
@@ -45,6 +46,23 @@ export const getAdminStats = async (req, res, next) => {
     // Recent orders
     const recentOrders = await Order.find().populate('buyer', 'name email').sort({ createdAt: -1 }).limit(5);
 
+    // Verified system configuration & telemetry
+    const isDbConnected = mongoose.connection.readyState === 1;
+    const dbHost = mongoose.connection.host || '';
+    const isLocal = dbHost.includes('127.0.0.1') || dbHost.includes('localhost');
+
+    const system = {
+      dbConnected: isDbConnected,
+      dbStatus: isDbConnected ? 'Connected' : 'Disconnected',
+      dbType: 'MongoDB',
+      dbEnvironment: isDbConnected ? (isLocal ? 'Local Instance' : 'Remote Cloud Cluster') : 'Disconnected',
+      nodeVersion: process.version,
+      environment: process.env.NODE_ENV === 'production' ? 'Production' : 'Development',
+      serverStatus: 'Operational',
+      securityStatus: 'JWT & Role Auth Active',
+      weatherProvider: 'Open-Meteo REST API'
+    };
+
     res.json({
       success: true,
       data: {
@@ -62,6 +80,7 @@ export const getAdminStats = async (req, res, next) => {
           totalOrderValue,
           pendingConsultations
         },
+        system,
         recentUsers,
         recentOrders
       }

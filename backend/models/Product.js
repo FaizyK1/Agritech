@@ -45,7 +45,7 @@ const productSchema = new mongoose.Schema(
     },
     location: {
       type: String,
-      default: 'Ludhiana, Punjab'
+      default: 'Local Mandi'
     },
     imageUrl: {
       type: String,

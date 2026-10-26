@@ -76,6 +76,10 @@ export const createProduct = async (req, res, next) => {
   try {
     const { title, category, description, price, unit, stockQuantity, location, imageUrl } = req.body;
 
+    const productLocation = (location && typeof location === 'string' && location.trim())
+      ? location.trim()
+      : ((req.user?.location && req.user.location.trim()) ? req.user.location.trim() : 'Local Mandi');
+
     const product = await Product.create({
       seller: req.user._id,
       title,
@@ -84,12 +88,12 @@ export const createProduct = async (req, res, next) => {
       price: Number(price),
       unit: unit || 'quintal',
       stockQuantity: Number(stockQuantity) || 1,
-      location: location || req.user.location || 'Local Mandi',
+      location: productLocation,
       imageUrl: imageUrl || 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&auto=format&fit=crop&q=80',
       status: Number(stockQuantity) > 0 ? 'Available' : 'Out of Stock'
     });
 
-    const populatedProduct = await Product.findById(product._id).populate('seller', 'name location phone');
+    const populatedProduct = await Product.findById(product._id).populate('seller', 'name email location phone');
 
     res.status(201).json({ success: true, data: populatedProduct });
   } catch (error) {

@@ -26,6 +26,7 @@ const AdminPage = () => {
   const { user } = useAuth();
 
   const [stats, setStats] = useState(null);
+  const [systemInfo, setSystemInfo] = useState(null);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState(null);
@@ -46,6 +47,7 @@ const AdminPage = () => {
         api.get('/admin/users')
       ]);
       setStats(statsRes.data.data?.counts || null);
+      setSystemInfo(statsRes.data.data?.system || null);
       setUsers(usersRes.data.data || []);
     } catch (err) {
       setAlert({
@@ -262,34 +264,44 @@ const AdminPage = () => {
 
       {/* System Telemetry & Database Status */}
       <div className="agri-card p-4 mb-4">
-        <h5 className="fw-bold text-dark mb-3">System Health & Backend Infrastructure</h5>
+        <h5 className="fw-bold text-dark mb-3">System & Infrastructure Configuration</h5>
         <div className="row g-3 text-center">
           <div className="col-md-3">
             <div className="p-3 bg-light rounded-3">
               <span className="small text-muted d-block">Database</span>
-              <strong className="text-success fs-6">MongoDB 8.3 Running</strong>
-              <small className="text-muted d-block">127.0.0.1:27017</small>
+              <strong className="text-success fs-6">
+                {systemInfo?.dbStatus === 'Connected' ? 'MongoDB (Connected)' : 'Not verified'}
+              </strong>
+              <small className="text-muted d-block">
+                {systemInfo?.dbEnvironment || 'Status unverified'}
+              </small>
             </div>
           </div>
           <div className="col-md-3">
             <div className="p-3 bg-light rounded-3">
               <span className="small text-muted d-block">API Gateway</span>
-              <strong className="text-success fs-6">Node.js Express 4.21</strong>
-              <small className="text-muted d-block">Port 5000 Active</small>
+              <strong className="text-success fs-6">
+                {systemInfo?.nodeVersion ? systemInfo.nodeVersion : 'Node.js Express'}
+              </strong>
+              <small className="text-muted d-block">
+                {systemInfo?.environment ? `${systemInfo.environment} Environment` : 'Active Gateway'}
+              </small>
             </div>
           </div>
           <div className="col-md-3">
             <div className="p-3 bg-light rounded-3">
-              <span className="small text-muted d-block">Security Layer</span>
-              <strong className="text-success fs-6">JWT & Bcrypt Hashing</strong>
-              <small className="text-muted d-block">Role Guarding Active</small>
+              <span className="small text-muted d-block">Security Architecture</span>
+              <strong className="text-success fs-6">JWT & Bcrypt Guarding</strong>
+              <small className="text-muted d-block">Role Authorization Enforced</small>
             </div>
           </div>
           <div className="col-md-3">
             <div className="p-3 bg-light rounded-3">
               <span className="small text-muted d-block">Weather Engine</span>
-              <strong className="text-success fs-6">Open-Meteo Integration</strong>
-              <small className="text-muted d-block">Hourly Global Sync</small>
+              <strong className="text-success fs-6">
+                {systemInfo?.weatherProvider || 'Open-Meteo REST API'}
+              </strong>
+              <small className="text-muted d-block">External Meteorological Service</small>
             </div>
           </div>
         </div>
@@ -305,40 +317,47 @@ const AdminPage = () => {
         </div>
 
         <div className="table-responsive">
-          <table className="table table-hover align-middle">
+          <table className="table table-hover align-middle mb-0 text-nowrap">
             <thead className="table-light">
               <tr>
-                <th>User Details</th>
-                <th>Role</th>
-                <th>Location</th>
-                <th>Contact</th>
-                <th>Registered</th>
-                <th>Action</th>
+                <th style={{ minWidth: '220px' }}>User Details</th>
+                <th style={{ minWidth: '140px' }}>Role</th>
+                <th style={{ minWidth: '150px' }}>Location</th>
+                <th style={{ minWidth: '130px' }}>Contact</th>
+                <th style={{ minWidth: '120px' }}>Registered</th>
+                <th style={{ width: '90px' }} className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
               {users.map((u) => (
                 <tr key={u._id}>
-                  <td>
+                  {/* User Details: Avatar + Name + Email ONLY */}
+                  <td style={{ minWidth: '220px' }}>
                     <div className="d-flex align-items-center gap-2">
                       <img
                         src={u.avatar || 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?w=60&auto=format&fit=crop&q=80'}
                         alt={u.name}
-                        className="rounded-circle border"
-                        style={{ width: '36px', height: '36px', objectFit: 'cover' }}
+                        className="rounded-circle border flex-shrink-0"
+                        style={{ width: '38px', height: '38px', objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?w=60&auto=format&fit=crop&q=80';
+                        }}
                       />
-                      <div>
-                        <strong className="d-block text-dark small">{u.name}</strong>
-                        <small className="text-muted">{u.email}</small>
+                      <div className="overflow-hidden">
+                        <strong className="d-block text-dark small text-truncate" title={u.name}>{u.name}</strong>
+                        <small className="text-muted d-block text-truncate" title={u.email}>{u.email}</small>
                       </div>
                     </div>
                   </td>
-                  <td>
+
+                  {/* Role: Proper Select Dropdown */}
+                  <td style={{ minWidth: '140px' }}>
                     <select
                       className={`form-select form-select-sm fw-semibold ${
-                        u.role === 'admin' ? 'text-danger' : u.role === 'expert' ? 'text-info' : 'text-success'
+                        u.role === 'admin' ? 'border-danger text-danger' : u.role === 'expert' ? 'border-info text-info' : 'border-success text-success'
                       }`}
-                      style={{ width: '115px' }}
+                      style={{ width: '120px' }}
                       value={u.role}
                       onChange={(e) => handleRoleChange(u._id, e.target.value)}
                     >
@@ -347,11 +366,26 @@ const AdminPage = () => {
                       <option value="admin">Admin</option>
                     </select>
                   </td>
-                  <td className="small text-muted">{u.location || 'Punjab Agro Zone'}</td>
-                  <td className="small text-muted">{u.phone || 'N/A'}</td>
-                  <td className="small text-muted">{new Date(u.createdAt).toLocaleDateString()}</td>
-                  <td>
-                    {u._id !== user?._id && (
+
+                  {/* Location */}
+                  <td style={{ minWidth: '150px' }} className="small text-muted">
+                    <i className="bi bi-geo-alt me-1 text-danger"></i>
+                    {u.location || 'N/A'}
+                  </td>
+
+                  {/* Contact */}
+                  <td style={{ minWidth: '130px' }} className="small text-muted">
+                    {u.phone || 'N/A'}
+                  </td>
+
+                  {/* Registered */}
+                  <td style={{ minWidth: '120px' }} className="small text-muted">
+                    {new Date(u.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </td>
+
+                  {/* Action */}
+                  <td style={{ width: '90px' }} className="text-center">
+                    {u._id !== user?._id ? (
                       <button
                         onClick={() => handleDeleteUser(u._id, u.name)}
                         className="btn btn-sm btn-outline-danger"
@@ -359,6 +393,8 @@ const AdminPage = () => {
                       >
                         <i className="bi bi-trash"></i>
                       </button>
+                    ) : (
+                      <span className="badge bg-light text-muted border">You</span>
                     )}
                   </td>
                 </tr>
@@ -500,18 +536,18 @@ const AdminPage = () => {
           </div>
         ) : (
           <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0">
+            <table className="table table-hover align-middle mb-0 text-nowrap">
               <thead className="table-light">
                 <tr>
-                  <th style={{ minWidth: '220px' }}>Product</th>
-                  <th style={{ minWidth: '160px' }}>Seller</th>
-                  <th style={{ minWidth: '150px' }}>Category</th>
-                  <th style={{ minWidth: '110px' }}>Price / Unit</th>
-                  <th style={{ minWidth: '100px' }}>Stock</th>
-                  <th style={{ minWidth: '130px' }}>Location</th>
-                  <th style={{ minWidth: '150px' }}>Status & Availability</th>
-                  <th style={{ minWidth: '100px' }}>Listed Date</th>
-                  <th style={{ minWidth: '80px' }} className="text-center">Action</th>
+                  <th style={{ minWidth: '230px' }}>Product</th>
+                  <th style={{ minWidth: '170px' }}>Seller</th>
+                  <th style={{ minWidth: '160px' }}>Category</th>
+                  <th style={{ minWidth: '150px' }}>Price / Unit</th>
+                  <th style={{ minWidth: '120px' }}>Stock</th>
+                  <th style={{ minWidth: '150px' }}>Location</th>
+                  <th style={{ minWidth: '160px' }}>Status & Availability</th>
+                  <th style={{ minWidth: '120px' }}>Listed Date</th>
+                  <th style={{ width: '90px' }} className="text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -521,7 +557,7 @@ const AdminPage = () => {
                   return (
                     <tr key={p._id}>
                       {/* Product Thumbnail & Title */}
-                      <td>
+                      <td style={{ minWidth: '230px' }}>
                         <div className="d-flex align-items-center gap-2">
                           <img
                             src={
@@ -542,39 +578,37 @@ const AdminPage = () => {
                               {p.title}
                             </strong>
                             <small className="text-muted d-block text-truncate" style={{ fontSize: '0.75rem' }}>
-                              ID: {p._id.slice(-6)}
+                              ID: {p._id ? p._id.slice(-6) : 'N/A'}
                             </small>
                           </div>
                         </div>
                       </td>
 
-                      {/* Seller Name & Email */}
-                      <td>
-                        <span className="d-block fw-semibold text-dark small text-truncate">
+                      {/* Seller Name & Email ONLY (Not product title) */}
+                      <td style={{ minWidth: '170px' }}>
+                        <span className="d-block fw-semibold text-dark small text-truncate" title={p.seller?.name || 'Unknown Seller'}>
                           {p.seller?.name || 'Unknown Seller'}
                         </span>
-                        <small className="text-muted d-block text-truncate" style={{ fontSize: '0.75rem' }}>
+                        <small className="text-muted d-block text-truncate" title={p.seller?.email || 'N/A'} style={{ fontSize: '0.75rem' }}>
                           {p.seller?.email || 'N/A'}
                         </small>
                       </td>
 
                       {/* Category */}
-                      <td>
+                      <td style={{ minWidth: '160px' }}>
                         <span className="badge bg-success-subtle text-success border border-success-subtle text-wrap text-start" style={{ fontSize: '0.75rem' }}>
                           {p.category}
                         </span>
                       </td>
 
-                      {/* Price & Unit */}
-                      <td>
-                        <strong className="text-dark small">₹{p.price?.toLocaleString()}</strong>
-                        <small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>
-                          per {p.unit}
-                        </small>
+                      {/* Price / Unit: Formatted, e.g. ₹2,800 per quintal */}
+                      <td style={{ minWidth: '150px' }}>
+                        <span className="fw-bold text-dark small">₹{Number(p.price).toLocaleString()}</span>
+                        <span className="text-muted small"> per {p.unit}</span>
                       </td>
 
                       {/* Stock Quantity */}
-                      <td>
+                      <td style={{ minWidth: '120px' }}>
                         <span
                           className={`badge ${
                             p.stockQuantity === 0
@@ -588,14 +622,14 @@ const AdminPage = () => {
                         </span>
                       </td>
 
-                      {/* Location */}
-                      <td className="small text-muted">
+                      {/* Location: Product Location */}
+                      <td style={{ minWidth: '150px' }} className="small text-muted">
                         <i className="bi bi-geo-alt text-danger me-1"></i>
                         <span className="text-truncate">{p.location || 'Local Mandi'}</span>
                       </td>
 
-                      {/* Status / Availability Dropdown */}
-                      <td>
+                      {/* Status / Availability Dropdown: Real usable dropdown */}
+                      <td style={{ minWidth: '160px' }}>
                         <select
                           className={`form-select form-select-sm fw-semibold ${
                             p.status === 'Available'
@@ -615,8 +649,8 @@ const AdminPage = () => {
                         </select>
                       </td>
 
-                      {/* Creation Date */}
-                      <td className="small text-muted">
+                      {/* Listed Date */}
+                      <td style={{ minWidth: '120px' }} className="small text-muted">
                         {new Date(p.createdAt).toLocaleDateString(undefined, {
                           year: 'numeric',
                           month: 'short',
@@ -624,8 +658,8 @@ const AdminPage = () => {
                         })}
                       </td>
 
-                      {/* Admin Actions */}
-                      <td className="text-center">
+                      {/* Admin Actions: Delete Button */}
+                      <td style={{ width: '90px' }} className="text-center">
                         <button
                           onClick={() => handleDeleteProduct(p._id, p.title)}
                           className="btn btn-sm btn-outline-danger"
