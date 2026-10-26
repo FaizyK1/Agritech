@@ -1,5 +1,6 @@
 import Product from '../models/Product.js';
 import Order from '../models/Order.js';
+import User from '../models/User.js';
 
 // @desc    Get all marketplace products
 // @route   GET /api/market/products
@@ -14,14 +15,26 @@ export const getProducts = async (req, res, next) => {
     }
 
     if (search) {
+      const matchingUsers = await User.find({
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { email: { $regex: search, $options: 'i' } }
+        ]
+      }).select('_id');
+      const userIds = matchingUsers.map((u) => u._id);
+
       query.$or = [
         { title: { $regex: search, $options: 'i' } },
         { description: { $regex: search, $options: 'i' } },
         { location: { $regex: search, $options: 'i' } }
       ];
+
+      if (userIds.length > 0) {
+        query.$or.push({ seller: { $in: userIds } });
+      }
     }
 
-    if (status) {
+    if (status && status !== 'All') {
       query.status = status;
     }
 
@@ -101,7 +114,7 @@ export const updateProduct = async (req, res, next) => {
     product = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
-    }).populate('seller', 'name');
+    }).populate('seller', 'name email phone location');
 
     res.json({ success: true, data: product });
   } catch (error) {
