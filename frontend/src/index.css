@@ -347,3 +347,51 @@ h1, h2, h3, h4, h5, h6, .navbar-brand {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Table Layout, Dropdowns & Responsive Table Governance */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure select elements in tables render as clear, distinct dropdown controls with normal text wrapping */
+.table select,
+.table .form-select,
+select.admin-select {
+  display: inline-block !important;
+  width: auto !important;
+  min-width: 110px !important;
+  white-space: normal !important;
+  word-wrap: normal !important;
+  line-height: 1.4 !important;
+  cursor: pointer;
+  background-color: #ffffff;
+}
+
+.table select option,
+.table .form-select option,
+select.admin-select option {
+  display: block !important;
+  white-space: normal !important;
+  word-wrap: normal !important;
+  padding: 4px 10px;
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+/* Cell truncation and alignment guards */
+.table td .text-truncate,
+.table th .text-truncate {
+  max-width: 100%;
+}

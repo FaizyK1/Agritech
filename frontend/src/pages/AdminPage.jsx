@@ -317,22 +317,22 @@ const AdminPage = () => {
         </div>
 
         <div className="table-responsive">
-          <table className="table table-hover align-middle mb-0 text-nowrap">
+          <table className="table table-hover align-middle mb-0">
             <thead className="table-light">
               <tr>
-                <th style={{ minWidth: '220px' }}>User Details</th>
-                <th style={{ minWidth: '140px' }}>Role</th>
+                <th style={{ minWidth: '220px', maxWidth: '280px' }}>User Details</th>
+                <th style={{ minWidth: '140px', width: '150px' }}>Role</th>
                 <th style={{ minWidth: '150px' }}>Location</th>
-                <th style={{ minWidth: '130px' }}>Contact</th>
-                <th style={{ minWidth: '120px' }}>Registered</th>
-                <th style={{ width: '90px' }} className="text-center">Action</th>
+                <th style={{ minWidth: '130px', whiteSpace: 'nowrap' }}>Contact</th>
+                <th style={{ minWidth: '120px', whiteSpace: 'nowrap' }}>Registered</th>
+                <th style={{ width: '90px', whiteSpace: 'nowrap' }} className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
               {users.map((u) => (
                 <tr key={u._id}>
                   {/* User Details: Avatar + Name + Email ONLY */}
-                  <td style={{ minWidth: '220px' }}>
+                  <td style={{ minWidth: '220px', maxWidth: '280px' }}>
                     <div className="d-flex align-items-center gap-2">
                       <img
                         src={u.avatar || 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?w=60&auto=format&fit=crop&q=80'}
@@ -344,7 +344,7 @@ const AdminPage = () => {
                           e.target.src = 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?w=60&auto=format&fit=crop&q=80';
                         }}
                       />
-                      <div className="overflow-hidden">
+                      <div className="overflow-hidden" style={{ minWidth: 0 }}>
                         <strong className="d-block text-dark small text-truncate" title={u.name}>{u.name}</strong>
                         <small className="text-muted d-block text-truncate" title={u.email}>{u.email}</small>
                       </div>
@@ -352,13 +352,15 @@ const AdminPage = () => {
                   </td>
 
                   {/* Role: Proper Select Dropdown */}
-                  <td style={{ minWidth: '140px' }}>
+                  <td style={{ minWidth: '140px', width: '150px' }}>
                     <select
-                      className={`form-select form-select-sm fw-semibold ${
+                      className={`form-select form-select-sm fw-semibold admin-select ${
                         u.role === 'admin' ? 'border-danger text-danger' : u.role === 'expert' ? 'border-info text-info' : 'border-success text-success'
                       }`}
-                      style={{ width: '120px' }}
+                      style={{ width: '125px', display: 'inline-block' }}
                       value={u.role}
+                      aria-label="User Role"
+                      data-role={u.role}
                       onChange={(e) => handleRoleChange(u._id, e.target.value)}
                     >
                       <option value="farmer">Farmer</option>
@@ -374,17 +376,17 @@ const AdminPage = () => {
                   </td>
 
                   {/* Contact */}
-                  <td style={{ minWidth: '130px' }} className="small text-muted">
+                  <td style={{ minWidth: '130px', whiteSpace: 'nowrap' }} className="small text-muted text-nowrap">
                     {u.phone || 'N/A'}
                   </td>
 
                   {/* Registered */}
-                  <td style={{ minWidth: '120px' }} className="small text-muted">
+                  <td style={{ minWidth: '120px', whiteSpace: 'nowrap' }} className="small text-muted text-nowrap">
                     {new Date(u.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                   </td>
 
                   {/* Action */}
-                  <td style={{ width: '90px' }} className="text-center">
+                  <td style={{ width: '90px', whiteSpace: 'nowrap' }} className="text-center text-nowrap">
                     {u._id !== user?._id ? (
                       <button
                         onClick={() => handleDeleteUser(u._id, u.name)}
@@ -536,18 +538,18 @@ const AdminPage = () => {
           </div>
         ) : (
           <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0 text-nowrap">
+            <table className="table table-hover align-middle mb-0">
               <thead className="table-light">
                 <tr>
-                  <th style={{ minWidth: '230px' }}>Product</th>
-                  <th style={{ minWidth: '170px' }}>Seller</th>
-                  <th style={{ minWidth: '160px' }}>Category</th>
-                  <th style={{ minWidth: '150px' }}>Price / Unit</th>
-                  <th style={{ minWidth: '120px' }}>Stock</th>
-                  <th style={{ minWidth: '150px' }}>Location</th>
+                  <th style={{ minWidth: '220px', maxWidth: '260px' }}>Product</th>
+                  <th style={{ minWidth: '160px', maxWidth: '200px' }}>Seller</th>
+                  <th style={{ minWidth: '150px' }}>Category</th>
+                  <th style={{ minWidth: '140px', whiteSpace: 'nowrap' }}>Price / Unit</th>
+                  <th style={{ minWidth: '110px', whiteSpace: 'nowrap' }}>Stock</th>
+                  <th style={{ minWidth: '140px' }}>Location</th>
                   <th style={{ minWidth: '160px' }}>Status & Availability</th>
-                  <th style={{ minWidth: '120px' }}>Listed Date</th>
-                  <th style={{ width: '90px' }} className="text-center">Action</th>
+                  <th style={{ minWidth: '120px', whiteSpace: 'nowrap' }}>Listed Date</th>
+                  <th style={{ width: '90px', whiteSpace: 'nowrap' }} className="text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -557,7 +559,7 @@ const AdminPage = () => {
                   return (
                     <tr key={p._id}>
                       {/* Product Thumbnail & Title */}
-                      <td style={{ minWidth: '230px' }}>
+                      <td style={{ minWidth: '220px', maxWidth: '260px' }}>
                         <div className="d-flex align-items-center gap-2">
                           <img
                             src={
@@ -573,7 +575,7 @@ const AdminPage = () => {
                                 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=100&auto=format&fit=crop&q=80';
                             }}
                           />
-                          <div className="overflow-hidden">
+                          <div className="overflow-hidden" style={{ minWidth: 0 }}>
                             <strong className="d-block text-dark text-truncate small" title={p.title}>
                               {p.title}
                             </strong>
@@ -585,30 +587,32 @@ const AdminPage = () => {
                       </td>
 
                       {/* Seller Name & Email ONLY (Not product title) */}
-                      <td style={{ minWidth: '170px' }}>
-                        <span className="d-block fw-semibold text-dark small text-truncate" title={p.seller?.name || 'Unknown Seller'}>
-                          {p.seller?.name || 'Unknown Seller'}
-                        </span>
-                        <small className="text-muted d-block text-truncate" title={p.seller?.email || 'N/A'} style={{ fontSize: '0.75rem' }}>
-                          {p.seller?.email || 'N/A'}
-                        </small>
+                      <td style={{ minWidth: '160px', maxWidth: '200px' }}>
+                        <div className="overflow-hidden" style={{ minWidth: 0 }}>
+                          <span className="d-block fw-semibold text-dark small text-truncate" title={p.seller?.name || 'Unknown Seller'}>
+                            {p.seller?.name || 'Unknown Seller'}
+                          </span>
+                          <small className="text-muted d-block text-truncate" title={p.seller?.email || 'N/A'} style={{ fontSize: '0.75rem' }}>
+                            {p.seller?.email || 'N/A'}
+                          </small>
+                        </div>
                       </td>
 
                       {/* Category */}
-                      <td style={{ minWidth: '160px' }}>
+                      <td style={{ minWidth: '150px' }}>
                         <span className="badge bg-success-subtle text-success border border-success-subtle text-wrap text-start" style={{ fontSize: '0.75rem' }}>
                           {p.category}
                         </span>
                       </td>
 
                       {/* Price / Unit: Formatted, e.g. ₹2,800 per quintal */}
-                      <td style={{ minWidth: '150px' }}>
+                      <td style={{ minWidth: '140px', whiteSpace: 'nowrap' }} className="text-nowrap">
                         <span className="fw-bold text-dark small">₹{Number(p.price).toLocaleString()}</span>
                         <span className="text-muted small"> per {p.unit}</span>
                       </td>
 
                       {/* Stock Quantity */}
-                      <td style={{ minWidth: '120px' }}>
+                      <td style={{ minWidth: '110px', whiteSpace: 'nowrap' }} className="text-nowrap">
                         <span
                           className={`badge ${
                             p.stockQuantity === 0
@@ -623,7 +627,7 @@ const AdminPage = () => {
                       </td>
 
                       {/* Location: Product Location */}
-                      <td style={{ minWidth: '150px' }} className="small text-muted">
+                      <td style={{ minWidth: '140px' }} className="small text-muted">
                         <i className="bi bi-geo-alt text-danger me-1"></i>
                         <span className="text-truncate">{p.location || 'Local Mandi'}</span>
                       </td>
@@ -631,15 +635,17 @@ const AdminPage = () => {
                       {/* Status / Availability Dropdown: Real usable dropdown */}
                       <td style={{ minWidth: '160px' }}>
                         <select
-                          className={`form-select form-select-sm fw-semibold ${
+                          className={`form-select form-select-sm fw-semibold admin-select ${
                             p.status === 'Available'
                               ? 'border-success text-success'
                               : p.status === 'Low Stock'
                               ? 'border-warning text-warning-emphasis'
                               : 'border-danger text-danger'
                           }`}
-                          style={{ width: '135px' }}
+                          style={{ width: '135px', display: 'inline-block' }}
                           value={p.status}
+                          aria-label="Product Status"
+                          data-status={p.status}
                           disabled={isBusy}
                           onChange={(e) => handleUpdateProductStatus(p._id, e.target.value)}
                         >
@@ -650,7 +656,7 @@ const AdminPage = () => {
                       </td>
 
                       {/* Listed Date */}
-                      <td style={{ minWidth: '120px' }} className="small text-muted">
+                      <td style={{ minWidth: '120px', whiteSpace: 'nowrap' }} className="small text-muted text-nowrap">
                         {new Date(p.createdAt).toLocaleDateString(undefined, {
                           year: 'numeric',
                           month: 'short',
@@ -659,7 +665,7 @@ const AdminPage = () => {
                       </td>
 
                       {/* Admin Actions: Delete Button */}
-                      <td style={{ width: '90px' }} className="text-center">
+                      <td style={{ width: '90px', whiteSpace: 'nowrap' }} className="text-center text-nowrap">
                         <button
                           onClick={() => handleDeleteProduct(p._id, p.title)}
                           className="btn btn-sm btn-outline-danger"
