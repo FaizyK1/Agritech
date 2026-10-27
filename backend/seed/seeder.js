@@ -12,12 +12,13 @@ import Consultation from '../models/Consultation.js';
 
 dotenv.config();
 
-const seedDatabase = async () => {
+export const seedDatabase = async (autoExit = true) => {
   try {
-    const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/agritech';
-    await mongoose.connect(mongoUri);
-    console.log('[Seeder]: Connected to MongoDB...');
-
+    if (mongoose.connection.readyState === 0) {
+      const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/agritech';
+      await mongoose.connect(mongoUri);
+      console.log('[Seeder]: Connected to MongoDB...');
+    }
     // Clear existing data
     await User.deleteMany();
     await Farm.deleteMany();
@@ -388,12 +389,14 @@ const seedDatabase = async () => {
     console.log('  👑 Admin:  admin@agritech.com  | admin123');
     console.log('======================================================\n');
 
-    await mongoose.disconnect();
-    process.exit(0);
+    if (autoExit) {
+      await mongoose.disconnect();
+      process.exit(0);
+    }
   } catch (error) {
     console.error('[Seeder Error]:', error);
     process.exit(1);
   }
 };
 
-seedDatabase();
+if (process.argv[1] && process.argv[1].replace(/\\\\/g, '/').endsWith('backend/seed/seeder.js')) { seedDatabase(true); }
